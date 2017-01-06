@@ -1,0 +1,91 @@
+﻿@model CardinalHub.Models.EventViewClass
+
+<div id="eventModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Create Event</h4>
+            </div>
+            <div class="modal-body">
+                <p>Location (Click on the map to choose a location)</p>
+                <div id="modalMap" class="modal-map"></div>
+                <div class="required-text"><span class="text-primary">*</span> Indicates required field</div>
+                <form id="createEventForm" action="/Home/CreateEvent" method="post">
+                    <div class="form-group">
+                        <label for="IconType">Icon Type</label>
+                        <div class="form-inline">
+                            @Html.EnumDropDownListFor(model => model.IconType, null, new { @class = "form-control", @onchange = "updateIcon();" })
+                            <span id="markerIcon" class="map-icon map-icon-art-gallery" style="height:30px;width:30px;font-size:xx-large;padding-left:5px;vertical-align:middle;"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="IconType">Icon Marker</label>
+                        <div class="form-inline">
+                            @Html.EnumDropDownListFor(model => model.IconMarker, null, new { @class = "form-control", @onchange = "updateMarker();" })
+                            <svg id="svIcon" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" style="fill:#66ccff;vertical-align:middle;" width="48" height="48" viewBox="0 0 48 48">
+                                <path id="iconPath" d="M24 0c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="jscolor {onFineChange:'update(this)',valueElement:null,value:'66ccff'}"
+                                style="border:1px solid black; height:35px;">
+                            Pick a color
+                        </button>
+                        <button type="button" style="border:1px solid black;  height:35px; width: 50px;">
+                            Done
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label for="EventName">Event Name <span class="text-primary">*</span></label>
+                        @Html.TextBox("EventName", null, new { @class = "form-control", placeholder = "Name your event" })
+                    </div>
+                    <div class="form-group">
+                        <label for="Building">Building</label>
+                        @Html.TextBox("Building", null, new { @class = "form-control", placeholder = "Building your event is in" })
+                    </div>
+                    <div class="form-group">
+                        <label for="Room">Room</label>
+                        @Html.TextBox("Room", null, new { @class = "form-control", placeholder = "Room your event is in" })
+                    </div>
+                    <div class="form-group">
+                        <label for="PhoneNo">Phone Number</label>
+                        @Html.TextBox("PhoneNo", null, new { @class = "form-control", placeholder = "(502)555-1234" })
+                    </div>
+                    <div class="form-group">
+                        <label for="WebSiteURL">Website</label>
+                        @Html.TextBox("WebSiteURL", null, new { @class = "form-control", placeholder = "http://www.cardhub.com" })
+                    </div>
+                    <div class="form-group">
+                        <label>Date <span class="text-primary">*</span></label>
+                        @Html.TextBox("Date", null, new { @class = "form-control", placeholder = "1/1/2016" })
+                    </div>
+                    <div class="form-group">
+                        <label>Start Time <span class="text-primary">*</span></label>
+                        @Html.TextBox("StartTime", null, new { @class = "form-control", placeholder = "20:00" })
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        @Html.TextBox("EndTime", null, new { @class = "form-control", placeholder = "20:00" })
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">Description <span class="text-primary">*</span></label>
+                        @Html.TextArea("Description", null, new { rows=10, @class = "form-control", placeholder = "Describe your event" })
+                    </div>
+                    @Html.Hidden("Latitude")
+                    @Html.Hidden("Longitude")
+                    @Html.Hidden("Address")
+                    @Html.Hidden("EventStartDateTime")
+                    @Html.Hidden("EventStartEndTime")
+                    @Html.Hidden("fillColor")
+                    <input class="btn btn-primary" type="button" value="Create" id="Save" />
+                    <div id="msg" class="msg"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,82 @@
+﻿@model CardinalHub.Models.EventViewClass
+
+@{
+    ViewBag.Title = "Cardinal Hub Home Page";
+}
+
+<script data-main="/Scripts/HomePage" src="~/Scripts/require.min.js"></script>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="panel panel-primary">
+            <div class="panel-heading user-info-header">
+                <div class="user-profile-image">
+                    <img class="img-responsive" src="@Model.AvatarImg" />
+                </div>
+            </div>
+            <div class="user-info panel-body">
+                <div class="user-info-name"><a href="#">@Model.CardHubUser.FirstName @Model.CardHubUser.LastName</a></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div id="map" class="map"></div>
+    </div>
+
+    <div class="col-md-3">
+        <table id="resultsTable" class="table table-striped">
+            <thead>
+                <tr><th colspan="2">Events</th></tr>
+            </thead>
+            <tbody id="results"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row feed-main">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <div class="feed-header">
+            <a href="#" class="selected feed-filter">Upcoming</a>
+            <a class="create-event-button pull-right btn-sm btn-primary" href="#" data-toggle="modal" data-target="#eventModal"><i class="fa fa-plus-square fa-lg"></i>&nbsp; Create Event</a>
+        </div>
+        <div id="feed" class="feed">
+            <div class="bar"></div>
+
+            @foreach (var item in Model.CardEvents)
+            {
+                var interaction = item.SocialInteractions.FirstOrDefault(a => a.CardHubUserID == Model.CardHubUser.CardHubUserID && a.CardEventID == item.CardEventID);
+                CardinalHub.Models.EventStatus eventStatus = CardinalHub.Models.EventStatus.None;
+                if (interaction != null) { eventStatus = interaction.EventStatus; }
+                <div class="feed-post-container">
+                    <div class="feed-post">
+                        <div>
+                            <a href="/Event/Details/@item.CardEventID" class="feed-title">@item.EventName</a>
+                        </div>
+                        <div class="feed-date">
+                            @item.EventStartDateTime
+                            @if (item.EventStartEndTime.HasValue) {<text>to @item.EventStartEndTime.Value.ToShortTimeString()</text>}
+                        </div>
+                        <div class="feed-location">
+                            @if (item.Location.Building != null) {
+                                <text>@item.Location.Building @item.Location.Room</text>
+                            } else
+                            {
+                                <text>@item.Location.Address, @item.Location.City, @item.Location.State</text>
+                            }
+                        </div>
+                        <div class="btn-group btn-group-justified buttons" data-eventid="@item.CardEventID">
+                            <span class="event-status-button btn btn-xs btn-primary @(eventStatus == CardinalHub.Models.EventStatus.Going ? "event-status-selected" : "")" data-type="Going">Going</span>
+                            <span class="event-status-button btn btn-xs btn-primary @(eventStatus == CardinalHub.Models.EventStatus.Maybe ? "event-status-selected" : "")" data-type="Maybe">Maybe</span>
+                            <span class="event-status-button btn btn-xs btn-primary @(eventStatus == CardinalHub.Models.EventStatus.Ignore ? "event-status-selected" : "")" data-type="Ignore">Ignore</span>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+</div>
+
+@RenderPage("CreateEventModal.cshtml")

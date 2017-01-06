@@ -1,0 +1,68 @@
+﻿@model CardinalHub.Models.EventViewClass
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script data-main="/Scripts/MapPage" src="~/Scripts/require.min.js"></script>
+
+<h2>Campus Map</h2>
+
+<div id="map" style="height:550px;padding-left:15px;"></div>
+<!--<p>
+    @Html.ActionLink("Create New Event", "Create")
+</p>-->
+
+<form id="eventForm" class="padded" action="/CampusMap/AddNewEvent" method="post">
+    @Html.Hidden("Longitude")
+    @Html.Hidden("Latitude")
+    @Html.Hidden("fillColor")
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="EventName">Event Name</label>
+                @Html.TextBox("EventName", null, new { @class = "form-control", placeholder = "Name your event" })
+            </div>
+            <div class="form-group">
+                <label for="ContentString">Description</label>
+                @Html.TextArea("ContentString", null, new { rows = 10, @class = "form-control", placeholder = "Describe your event" })
+            </div>
+            <div class="form-group">
+                <label for="EventType">Event Type</label>
+                @Html.EnumDropDownListFor(model => model.EventType, null, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="IconType">Icon Type</label>
+                <div class="form-inline">
+                    @Html.EnumDropDownListFor(model => model.IconType, null, new { @class = "form-control", @onchange = "updateIcon();" })
+                    <span id="markerIcon" class="map-icon map-icon-school" style="height:30px;width:30px;font-size:xx-large;padding-left:5px;vertical-align:middle; "></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="IconMarker">Icon Marker</label>
+                <div class="form-inline">
+                    @Html.EnumDropDownListFor(model => model.IconMarker, null, new { @class = "form-control", @onchange = "updateMarker();" })
+                    <svg id="svIcon" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" style="fill:#66ccff;vertical-align:middle;" width="48" height="48" viewBox="0 0 48 48">
+                        <path id="iconPath" d="M24 0c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="jscolor {onFineChange:'update(this)',valueElement:null,value:'66ccff'}"
+                        style="border:1px solid black; height:35px;">
+                    Pick a color
+                </button>
+                <button type="button" style="border:1px solid black;  height:35px; width: 50px;">
+                    Done
+                </button>
+            </div>
+            <input class="btn btn-primary" type="button" value="Add Event" id="Save" />
+            <span id="msg" style="color:red;" />
+        </div>
+    </div>
+</form>

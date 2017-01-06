@@ -1,0 +1,110 @@
+﻿@model CardinalHub.Models.EventPageViewClass
+
+@{ 
+    CardinalHub.Models.EventStatus eventStatus = CardinalHub.Models.EventStatus.None;
+    var interaction = Model.CardEvent.SocialInteractions.FirstOrDefault(a => a.CardHubUserID == Model.CurrentUserId);
+    if (interaction != null) { eventStatus = interaction.EventStatus; }
+}
+
+<script data-main="/Scripts/EventPage" src="~/Scripts/require.min.js"></script>
+
+<div id="MapData" data-icontype="@Model.CardEvent.Location.MapIcon.IconType" data-eventname="@Model.CardEvent.EventName" data-fillcolor="@Model.CardEvent.Location.MapIcon.fillColor" data-iconmarker="@Model.CardEvent.Location.MapIcon.IconMarker" data-long="@Model.CardEvent.Location.Longitude" data-lat="@Model.CardEvent.Location.Latitude" style="display: none"></div>
+
+<div id="FavoriteList" class="row">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="jumbotron">
+                <h1>@Model.CardEvent.EventName</h1>
+                @if (Model.CardEvent.EventStartDateTime.HasValue)
+                {
+                    <p>
+                        @Model.CardEvent.EventStartDateTime.Value.ToShortDateString() @Model.CardEvent.EventStartDateTime.Value.ToShortTimeString() @if (Model.CardEvent.EventStartEndTime.HasValue)
+                        {<text>to @Model.CardEvent.EventStartEndTime.Value.ToShortTimeString()</text>}
+                    </p>
+                }
+                @if (Model.CardEvent.CardHubUserID == Model.CurrentUserId)
+                {
+                    <a class="edit-event-button btn-sm btn-primary" href="#" data-toggle="modal" data-target="#eventModal"><i class="fa fa-pencil fa-lg"></i>&nbsp; Edit Event</a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-9">
+            <div class="panel panel-default">
+                <div class="panel-heading">Details</div>
+                <div class="panel-body">
+                    <p>
+                        @Model.CardEvent.Description
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="event-location panel panel-default">
+                <div class="panel-heading">
+                    Location
+                </div>
+                <div class="panel-body">
+                    <div class="map-box">
+                        <div id="map" class="small-map"></div>
+                    </div>
+                    <div class="event-location-info">
+                        <div><i class="fa fa-map-marker fa-lg icon pull-left"></i><span class="event-info">@Model.CardEvent.Location.Address, @Model.CardEvent.Location.City, @Model.CardEvent.Location.State</span></div>
+                        <div><i class="fa fa-building fa-lg icon pull-left"></i>
+                            <span class="event-info">
+                                @if (@Model.CardEvent.Location.Building != null)
+                                {
+                                    <text>@Model.CardEvent.Location.Building @Model.CardEvent.Location.Room</text>
+                                } else
+                                {
+                                    <text>-</text>
+                                }
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="EventStatusButtons" class="btn-group btn-group-justified buttons-big" data-eventid="@Model.CardEvent.CardEventID">
+                <span class="event-status-button btn btn btn-primary @(eventStatus == CardinalHub.Models.EventStatus.Going ? "event-status-selected" : "")" data-type="Going">Going</span>
+                <span class="event-status-button btn btn btn-primary @(eventStatus == CardinalHub.Models.EventStatus.Maybe ? "event-status-selected" : "")" data-type="Maybe">Maybe</span>
+                <span class="event-status-button btn btn btn-primary @(eventStatus == CardinalHub.Models.EventStatus.Ignore ? "event-status-selected" : "")" data-type="Ignore">Ignore</span>
+            </div>
+
+            <div class="event-attendees panel panel-default">
+                <div class="panel-heading">Attendees</div>
+                <div class="panel-body">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="count">
+                                        @Model.CardEvent.GoingCount
+                                    </div>
+                                    <span>Going</span>
+                                </td>
+                                <td>
+                                    <div class="count">
+                                        @Model.CardEvent.MaybeCount
+                                    </div>
+                                    <span>Maybe</span>
+                                </td>
+                                <td>
+                                    <div class="count">
+                                        @Model.CardEvent.InvitedCount
+                                    </div>
+                                    <span>Invited</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@RenderPage("EditEventModal.cshtml")
